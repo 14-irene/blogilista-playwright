@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createWith } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -32,6 +32,18 @@ describe('Blog app', () => {
       const errorDiv = await page.locator('.popup')
       await expect(errorDiv).toContainText('wrong credentials')
       await expect(errorDiv).toHaveCSS('border', '2px solid rgb(255, 0, 0)')
+    })
+  })
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'irir', 'salainen')
+    })
+    test('a new blog can be created', async ({ page }) => {
+      await createWith(page, 'blogi', 'ira', 'url')
+      const addedDiv = await page.locator('.popup')
+      await expect(addedDiv).toContainText('added a new blog blogi by ira') 
+      await expect(addedDiv).toHaveCSS('border', '2px solid rgb(0, 128, 0)') 
+      
     })
   })
 })

@@ -37,13 +37,20 @@ describe('Blog app', () => {
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, 'irir', 'salainen')
+      await createWith(page, 'just blogging', 'you', 'url')
     })
     test('a new blog can be created', async ({ page }) => {
       await createWith(page, 'blogi', 'ira', 'url')
       const addedDiv = await page.locator('.popup')
       await expect(addedDiv).toContainText('added a new blog blogi by ira') 
       await expect(addedDiv).toHaveCSS('border', '2px solid rgb(0, 128, 0)') 
-      
+      await expect(page.getByText('blogi ira')).toBeVisible()
+    })
+    test('blog can be liked', async ({ page }) => {
+      await page.getByTestId('view').click()
+      await expect(page.getByText('likes 0')).toBeVisible()
+      await page.getByTestId('like').click()
+      await expect(page.getByText('likes 1')).toBeVisible()
     })
   })
 })
